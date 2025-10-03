@@ -25,3 +25,28 @@ vocab = sorted(set(text))
 
 example_texts = ["abcdefg", "xyz"]
 
+# TODO 1
+chars = tf.strings.unicode_split(example_texts, input_encoding="UTF-8")
+# print(chars)
+
+# Convert characters to ids
+ids_from_chars = tf.keras.layers.StringLookup(
+    vocabulary=list(vocab), mask_token=None
+)
+ids = ids_from_chars(chars)
+# print(ids)``
+
+chars_from_ids = tf.keras.layers.StringLookup(
+    vocabulary=ids_from_chars.get_vocabulary(), invert=True, mask_token=None
+)
+
+chars = chars_from_ids(ids)
+# print(chars)
+
+# join the chars into strings
+tf.strings.reduce_join(chars, axis=-1).numpy()
+
+def text_from_ids(ids):
+    return tf.strings.reduce_join(chars_from_ids(ids), axis=-1)
+
+
